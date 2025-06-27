@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="415.0" prefWidth="777.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+      <VBox prefHeight="400.0" prefWidth="150.0" style="-fx-background-color: #08344c;" BorderPane.alignment="CENTER">
+         <children>
+            <HBox fx:id="menuIngredient" alignment="CENTER" onMouseClicked="#menuCreateIngredientClicked" onMouseEntered="#menuEntered" onMouseExited="#menuExited" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="lImport" text="Zutat importieren" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox fx:id="menuImported" alignment="CENTER" onMouseClicked="#menuImportedIngredientClicked" onMouseEntered="#menuEntered" onMouseExited="#menuExited" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="lIngredients" text="Zutaten" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox fx:id="menuCreateRecipe" alignment="CENTER" onMouseClicked="#menuCreateRecipeClicked" onMouseEntered="#menuEntered" onMouseExited="#menuExited" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="lCreateRecipe" text="Rezept erstellen" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox fx:id="menuRecipe" alignment="CENTER" onMouseClicked="#menuRecipeClicked" onMouseEntered="#menuEntered" onMouseExited="#menuExited" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="lRecipe" text="Rezepte" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="imageBackground" fitHeight="386.0" fitWidth="610.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>

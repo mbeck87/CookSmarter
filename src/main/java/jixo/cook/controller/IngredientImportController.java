@@ -119,7 +119,7 @@ public class IngredientImportController {
     private void updateUIWithResults(JsonNode items) {
         flowPane.getChildren().clear();
         for (JsonNode item : items) {
-            Ingredient ingredient = manager.createIngredient(item);
+            Ingredient ingredient = Ingredient.createFromJson(item);
             if (ingredient != null) {
                 addListener(ingredient);
                 flowPane.getChildren().add(ingredient);

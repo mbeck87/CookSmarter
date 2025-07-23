@@ -1,77 +1,106 @@
-🍲 CookSmarter
-CookSmarter ist eine JavaFX-basierte Desktop-App zur einfachen Erstellung und Bearbeitung von Rezepten mit automatischer Berechnung der Nährwerte. Die App richtet sich an Menschen, die ihre Ernährung gezielt planen möchten – etwa zum Kalorienzählen oder für Fitnessziele – und bietet dabei eine flexible, editierbare Zutatenverwaltung.
+# 🍲 CookSmarter
 
-✨ Features
-📥 Zutaten aus einer öffentlichen Lebensmitteldatenbank importieren
+**CookSmarter** ist eine JavaFX-basierte Desktop-App zur einfachen Erstellung und Bearbeitung von Rezepten – mit automatischer Berechnung der Nährwerte.
 
-🧮 Nährwerte einzelner Zutaten einsehen und editieren
+Die App richtet sich an alle, die ihre Ernährung gezielt planen möchten (z. B. für Kalorienzählen oder Fitnessziele) und bietet eine flexible, editierbare Zutatenverwaltung.
 
-🍽️ Eigene Rezepte aus vorhandenen Zutaten erstellen
+---
 
-🔄 Dynamisches Hinzufügen/Entfernen von Zutaten in Rezepten
+## ✨ Features
 
-💾 Lokale Speicherung von Zutaten und Rezepten im JSON-Format
+- 📥 **Import** von Zutaten aus einer öffentlichen Lebensmitteldatenbank  
+- 🧪 **Nährwerte anzeigen & bearbeiten** für einzelne Zutaten  
+- 🍽️ **Eigene Rezepte erstellen** aus vorhandenen Zutaten  
+- 🔄 **Dynamisches Hinzufügen/Entfernen** von Zutaten in Rezepten  
+- 📂 **Lokale Speicherung** im JSON-Format (Zutaten & Rezepte)  
 
-🎯 Motivation
-Die Idee entstand, als meine Schwester begann, Kalorien zu zählen und ein Tool suchte, mit dem sie bei Rezepten flexibel experimentieren und dabei die Nährwerte stets im Blick behalten konnte.
-Zudem nutzte ich das Projekt, um meine Kenntnisse in JavaFX, im Umgang mit JSON-Dateien, sowie dem Arbeiten mit öffentlichen APIs zu vertiefen.
+---
 
-⚙️ Installation & Ausführung
-Dieses Projekt ist ein Java Maven-Projekt. Du kannst es mit IntelliJ IDEA oder jeder anderen Maven-kompatiblen IDE öffnen und direkt starten.
+## 🎯 Motivation
 
-Voraussetzungen
-Java 17 oder neuer
+Das Projekt entstand, als meine Schwester begann, Kalorien zu zählen und ein Tool suchte, mit dem sie flexibel experimentieren und gleichzeitig Nährwerte im Blick behalten konnte.  
 
-Maven
+Ich habe es auch genutzt, um meine Kenntnisse in **JavaFX**, im Umgang mit **JSON-Dateien** und öffentlichen **APIs** zu vertiefen.
 
-Build & Run
-bash
-Kopieren
-Bearbeiten
+---
+
+## ⚙️ Installation & Ausführung
+
+> Dieses Projekt ist ein **Java Maven-Projekt**. Du kannst es mit **IntelliJ IDEA** oder einer anderen Maven-kompatiblen IDE öffnen.
+
+### 𞷾 Voraussetzungen
+
+- Java 17 oder neuer  
+- Maven  
+
+### 💻 Build & Run
+
+```bash
 git clone https://github.com/mbeck87/CookSmarter.git
 cd CookSmarter
 mvn clean install
-Du kannst die App aus der IDE starten oder per Maven-Befehl:
+```
 
-bash
-Kopieren
-Bearbeiten
+Du kannst die App entweder direkt aus der IDE starten oder per Maven:
+
+```bash
 mvn javafx:run
-🚀 Nutzung
-Zutaten importieren
-→ Durchsuche eine öffentliche Nährwert-Datenbank und importiere Zutaten lokal.
+```
 
-Zutaten verwalten
-→ Bearbeite Nährwertangaben, Namen oder Einheiten vorhandener Zutaten.
+---
 
-Rezept erstellen
-→ Kombiniere Zutaten, passe Mengen an, und lasse die Gesamt-Nährwerte automatisch berechnen.
+## 🚀 Nutzung
 
-Rezepte einsehen & bearbeiten
-→ Verwalte deine gespeicherten Rezepte einfach über die GUI.
+- **Zutaten importieren**  
+  → Durchsuche eine öffentliche Nährwert-Datenbank und importiere Zutaten lokal.
 
-🗂️ Projektstruktur
-css
-Kopieren
-Bearbeiten
+- **Zutaten verwalten**  
+  → Bearbeite Nährwertangaben, Namen oder Einheiten vorhandener Zutaten.
+
+- **Rezept erstellen**  
+  → Kombiniere Zutaten, passe Mengen an, Gesamt-Nährwerte werden automatisch berechnet.
+
+- **Rezepte einsehen & bearbeiten**  
+  → Verwalte deine gespeicherten Rezepte bequem über die GUI.
+
+---
+
+## 📂 Projektstruktur
+
+```
 src/
 ├── main/
 │   ├── java/
-│   │   └── jixo.cook.controller/     → JavaFX Controller (FXML-Logik)
-│   │   └── jixo.cook.scripts/        → Hauptklassen, Datenmodelle, Hilfsmethoden
-│   ├── resources/
-│       └── jixo.cool.fxml/           → GUI-Definitionen (FXML-Dateien)
-│       └── jixo.cool.images/         → Grafiken und Icons
+│   │   └── jixo.cook.controller/   → JavaFX Controller (FXML-Logik)
+│   │   └── jixo.cook.scripts/     → Hauptklassen, Datenmodelle, Hilfsmethoden
+│   └── resources/
+│       └── jixo.cool.fxml/        → GUI-Definitionen (FXML-Dateien)
+│       └── jixo.cool.images/      → Grafiken und Icons
+```
 
-🧪 Tests
-Derzeit sind keine automatisierten Tests integriert. Geplant ist die Erweiterung um Unit-Tests für die Logikkomponenten in zukünftigen Releases.
+---
 
-🧩 Mitwirken
-Aktuell wird das Projekt ausschließlich von mir gepflegt.
+## 🧪 Tests
 
-📜 Lizenz
-Dieses Projekt ist Open Source unter der MIT License.
+> Derzeit sind **keine automatisierten Tests** integriert.  
+Geplant ist die Erweiterung um Unit-Tests für Logikkomponenten in zukünftigen Releases.
 
-👤 Entwickler
-@mbeck87 – Entwicklung, Idee, Wartung
-GitHub: https://github.com/mbeck87
+---
+
+## 🧹 Mitwirken
+
+> Aktuell wird das Projekt **allein von mir gepflegt**.  
+Pull Requests sind dennoch willkommen!
+
+---
+
+## 📜 Lizenz
+
+**MIT License** – frei nutzbar, modifizierbar und verbreitbar.
+
+---
+
+## 👤 Entwickler
+
+**@mbeck87** – Entwicklung, Idee, Wartung  
+👉 [GitHub-Profil](https://github.com/mbeck87)

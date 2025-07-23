@@ -96,7 +96,8 @@ Pull Requests sind dennoch willkommen!
 
 ## 📜 Lizenz
 
-**MIT License** – frei nutzbar, modifizierbar und verbreitbar.
+Dieses Projekt steht unter der **MIT License**.  
+Das bedeutet: freie Nutzung, Veränderung und Weiterverbreitung – bitte mit Verweis auf den/die Autor:in.
 
 ---
 

@@ -65,7 +65,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.jixo.cook.cooksmarter/com.jixo.cook.cooksmarter.MainClass</mainClass>
+                            <mainClass>com.jixo.cook.cooksmarter/com.jixo.cook.scripts.MainClass</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

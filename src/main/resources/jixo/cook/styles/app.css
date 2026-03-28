@@ -439,3 +439,19 @@
     -fx-padding: 8 12;
     -fx-font-size: 12px;
 }
+
+.ai-mode-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #52B788;
+    -fx-border-color: #52B788;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 11px;
+    -fx-padding: 3 8;
+    -fx-cursor: hand;
+}
+
+.ai-mode-btn-active {
+    -fx-background-color: #52B788;
+    -fx-text-fill: #FFFFFF;
+}

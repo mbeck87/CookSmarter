@@ -36,6 +36,7 @@ public class EditIngredientsController {
     @FXML private ScrollPane scrollPane;
     @FXML private StackPane chatContainer;
     @FXML private Button bAi;
+    @FXML private Button bAiInfo;
 
     private final ManageIngredientUseCase manageUseCase = AppConfig.getInstance().manageIngredient;
     private final ImportIngredientUseCase importUseCase = AppConfig.getInstance().importIngredient;
@@ -133,6 +134,19 @@ public class EditIngredientsController {
             fFat.setText(""); fSalt.setText(""); fProtein.setText(""); fFiber.setText(""); fCarbohydrates.setText("");
             chatPanel.setIngredient(null);
         }
+    }
+
+    @FXML
+    void aiInfoAction(ActionEvent event) {
+        if (selected == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Hinweis");
+            alert.setHeaderText(null);
+            alert.setContentText("Bitte zuerst eine Zutat auswählen.");
+            alert.showAndWait();
+            return;
+        }
+        chatPanel.showAnalysis(selected.getIngredient());
     }
 
     @FXML

@@ -23,7 +23,6 @@ public class AiChatPanel extends VBox {
     private final VBox chatMessages = new VBox(8);
     private final TextField inputField = new TextField();
     private final Button sendButton = new Button("Senden");
-    private Ingredient currentIngredient = null;
     private boolean waiting = false;
 
     public AiChatPanel(AiIngredientUseCase useCase, Consumer<Ingredient> onIngredientCreated) {
@@ -33,12 +32,22 @@ public class AiChatPanel extends VBox {
     }
 
     public void setIngredient(Ingredient ingredient) {
-        this.currentIngredient = ingredient;
-        if (ingredient != null) {
-            inputField.setPromptText("Frage zur Zutat stellen …");
-        } else {
-            inputField.setPromptText("Lebensmittel beschreiben (z.B. Weizenmehl) …");
-        }
+        // kept for deselect-reset, no mode logic needed
+    }
+
+    public void showAnalysis(Ingredient ingredient) {
+        if (waiting) return;
+        addAiMessage("Analysiere " + ingredient.getName() + " …");
+        waiting = true;
+        inputField.setDisable(true);
+        sendButton.setDisable(true);
+        new Thread(() -> {
+            String response = useCase.analyze(ingredient);
+            Platform.runLater(() -> {
+                addAiMessage(response != null ? response : "Keine Antwort erhalten.");
+                done();
+            });
+        }).start();
     }
 
     private void build() {
@@ -63,7 +72,7 @@ public class AiChatPanel extends VBox {
         chatMessages.heightProperty().addListener((obs, old, val) ->
                 scroll.setVvalue(1.0));
 
-        addWelcomeMessage();
+        addAiMessage("Hallo! Beschreibe ein Lebensmittel und ich erstelle die Nährwerte dafür.");
 
         inputField.setPromptText("Lebensmittel beschreiben (z.B. Weizenmehl) …");
         inputField.getStyleClass().add("ai-chat-input");
@@ -82,10 +91,6 @@ public class AiChatPanel extends VBox {
         getChildren().addAll(title, scroll, inputRow);
     }
 
-    private void addWelcomeMessage() {
-        addAiMessage("Hallo! Wähle eine Zutat aus, um eine Analyse zu erhalten, oder beschreibe ein Lebensmittel, das ich für dich anlegen soll.");
-    }
-
     private void send() {
         String text = inputField.getText().trim();
         if (text.isEmpty() || waiting) return;
@@ -96,28 +101,18 @@ public class AiChatPanel extends VBox {
         inputField.setDisable(true);
         sendButton.setDisable(true);
 
-        if (currentIngredient != null) {
-            new Thread(() -> {
-                String response = useCase.analyze(currentIngredient);
-                Platform.runLater(() -> {
-                    addAiMessage(response != null ? response : "Keine Antwort erhalten.");
-                    done();
-                });
-            }).start();
-        } else {
-            new Thread(() -> {
-                Ingredient created = useCase.createFromDescription(text);
-                Platform.runLater(() -> {
-                    if (created != null) {
-                        addAiMessage("Ich habe die Nährwerte für \"" + created.getName() + "\" erstellt und in das Formular eingetragen. Bitte prüfe die Werte und klicke auf Speichern.");
-                        onIngredientCreated.accept(created);
-                    } else {
-                        addAiMessage("Ich konnte keine Nährwerte für diese Beschreibung ermitteln. Bitte versuche es erneut.");
-                    }
-                    done();
-                });
-            }).start();
-        }
+        new Thread(() -> {
+            Ingredient created = useCase.createFromDescription(text);
+            Platform.runLater(() -> {
+                if (created != null) {
+                    addAiMessage("Ich habe die Nährwerte für \"" + created.getName() + "\" erstellt und in das Formular eingetragen. Bitte prüfe die Werte und klicke auf Speichern.");
+                    onIngredientCreated.accept(created);
+                } else {
+                    addAiMessage("Ich konnte keine Nährwerte für diese Beschreibung ermitteln. Bitte versuche es erneut.");
+                }
+                done();
+            });
+        }).start();
     }
 
     private void done() {

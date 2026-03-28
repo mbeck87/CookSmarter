@@ -105,9 +105,14 @@
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="8.0">
                <children>
-                  <Button fx:id="bAi" mnemonicParsing="false" onAction="#aiAction" styleClass="btn-secondary" text="AI" />
                   <Button mnemonicParsing="false" onAction="#okayAction" styleClass="btn-primary" text="Speichern" />
                   <Button mnemonicParsing="false" onAction="#deleteAction" styleClass="btn-danger" text="Löschen" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="8.0">
+               <children>
+                  <Button fx:id="bAi" mnemonicParsing="false" onAction="#aiAction" styleClass="btn-secondary" text="AI" />
+                  <Button fx:id="bAiInfo" mnemonicParsing="false" onAction="#aiInfoAction" styleClass="btn-secondary" text="AI Info" />
                </children>
             </HBox>
          </children>

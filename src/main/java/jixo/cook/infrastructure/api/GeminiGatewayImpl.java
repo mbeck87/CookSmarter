@@ -8,6 +8,8 @@ import jixo.cook.domain.interfaces.GeminiGateway;
 import jixo.cook.domain.model.Ingredient;
 
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -16,8 +18,23 @@ import java.time.Duration;
 
 public class GeminiGatewayImpl implements GeminiGateway {
 
-    private static final String API_KEY = "AIzaSyA9xRXT0PfQTSOlOllQmVdMdzyEvDVuXso";
+    private static final String API_KEY = loadApiKey();
     private static final String URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY;
+
+    private static String loadApiKey() {
+        String envFile = System.getProperty("user.dir") + "/.env";
+        try (BufferedReader reader = new BufferedReader(new FileReader(envFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("GEMINI_API_KEY=")) {
+                    return line.substring("GEMINI_API_KEY=".length()).trim();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println(".env nicht gefunden oder nicht lesbar: " + e.getMessage());
+        }
+        return "";
+    }
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();

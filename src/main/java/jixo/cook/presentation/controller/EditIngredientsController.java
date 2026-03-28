@@ -105,6 +105,7 @@ public class EditIngredientsController {
         ing.setFiber(fFiber.getText());
         ing.setCarbohydrates(fCarbohydrates.getText());
         importUseCase.importIngredient(ing);
+        chatPanel.setIngredient(ing);
         updateList();
         updateUI(ingredientList);
 

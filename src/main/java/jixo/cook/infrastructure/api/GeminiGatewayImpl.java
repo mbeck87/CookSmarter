@@ -19,8 +19,7 @@ import java.time.Duration;
 public class GeminiGatewayImpl implements GeminiGateway {
 
     private static final String API_KEY = loadApiKey();
-    private static final String URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY;
-
+    private static final String URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=" + API_KEY;
     private static String loadApiKey() {
         String envFile = System.getProperty("user.dir") + "/.env";
         try (BufferedReader reader = new BufferedReader(new FileReader(envFile))) {
@@ -58,9 +57,10 @@ public class GeminiGatewayImpl implements GeminiGateway {
     @Override
     public String analyzeIngredient(Ingredient ingredient) {
         String prompt = "Du bist ein Ernährungsberater. Analysiere diese Zutat auf Deutsch in 3-5 Sätzen.\n" +
-                "Weise außerdem explizit darauf hin, wenn ein Wert fehlt (z.B. 'unbekannt'), " +
-                "offensichtlich falsch ist (z.B. Zucker > Kohlenhydrate, negative Werte) " +
-                "oder unverhältnismäßig hoch/niedrig für dieses Lebensmittel erscheint.\n\n" +
+                "Vergleiche die angegebenen Nährwerte mit den Werten, die du für dieses Lebensmittel erwarten würdest. " +
+                "Weise auf einzelne Werte hin, die deutlich von deinem Erwartungswert abweichen – ohne Berechnung, " +
+                "nur basierend auf deinem Ernährungswissen. Logisch unmögliche Werte (z.B. Zucker > Kohlenhydrate) " +
+                "immer nennen. Wenn die Werte insgesamt plausibel sind, bestätige das kurz.\n\n" +
                 "Name: " + ingredient.getName() +
                 ", Energie: " + ingredient.getEnergy() + " kJ" +
                 ", Kohlenhydrate: " + ingredient.getCarbohydrates() + " g" +
@@ -76,10 +76,15 @@ public class GeminiGatewayImpl implements GeminiGateway {
 
     @Override
     public Ingredient createFromDescription(String description) {
-        String prompt = "Du bist ein Ernährungsexperte. Erstelle Nährwerte pro 100g für: \"" + description + "\"\n" +
+        String prompt = "Du bist ein Ernährungsexperte mit Zugang zu etablierten Nährwertdatenbanken (USDA, BLS, OpenFoodFacts).\n" +
+                "Gib die durchschnittlichen Nährwerte pro 100g für folgendes Lebensmittel an: \"" + description + "\"\n" +
+                "Verwende typische Referenzwerte für die Standardform dieses Lebensmittels (z.B. roh, unverarbeitet, sofern nicht anders angegeben).\n" +
                 "Antworte NUR mit einem JSON-Objekt, kein Text davor oder danach, keine Markdown-Blöcke:\n" +
-                "{\"name\":\"...\",\"energy\":\"...\",\"carbohydrates\":\"...\",\"sugar\":\"...\",\"saturatedFat\":\"...\",\"salt\":\"...\",\"proteins\":\"...\",\"fiber\":\"...\"}\n" +
-                "Alle Nährwert-Werte sind Zahlen als String mit Punkt als Dezimaltrennzeichen.";
+                "{\"name\":\"...\",\"energyKj\":\"...\",\"energyKcal\":\"...\",\"carbohydrates\":\"...\",\"sugar\":\"...\",\"saturatedFat\":\"...\",\"salt\":\"...\",\"proteins\":\"...\",\"fiber\":\"...\"}\n" +
+                "Regeln:\n" +
+                "- energyKj (Kilojoule) und energyKcal (Kilokalorien) müssen konsistent sein (1 kcal = 4.184 kJ)\n" +
+                "- Zucker darf nie größer als Kohlenhydrate sein\n" +
+                "- Alle Werte als String, Dezimaltrennzeichen ist Punkt, eine Nachkommastelle";
 
         String response = sendRequest(prompt);
         if (response == null) { lastError = "Keine Antwort erhalten."; return null; }
@@ -94,7 +99,17 @@ public class GeminiGatewayImpl implements GeminiGateway {
             JsonNode node = mapper.readTree(json);
             Ingredient ing = new Ingredient();
             ing.setName(node.path("name").asText("unbekannt"));
-            ing.setEnergy(node.path("energy").asText("0"));
+            String kj   = node.path("energyKj").asText("");
+            String kcal = node.path("energyKcal").asText("");
+            if (!kj.isEmpty() && !kj.equals("0")) {
+                ing.setEnergy(kj);
+            } else if (!kcal.isEmpty() && !kcal.equals("0")) {
+                // fallback: convert kcal → kJ
+                double computed = Double.parseDouble(kcal.replace(",", ".")) * 4.184;
+                ing.setEnergy(String.format(java.util.Locale.US, "%.2f", computed));
+            } else {
+                ing.setEnergy("0");
+            }
             ing.setCarbohydrates(node.path("carbohydrates").asText("0"));
             ing.setSugar(node.path("sugar").asText("0"));
             ing.setSaturatedFat(node.path("saturatedFat").asText("0"));

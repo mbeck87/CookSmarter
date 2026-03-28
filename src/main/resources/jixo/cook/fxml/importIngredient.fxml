@@ -73,6 +73,16 @@
             </HBox>
             <HBox alignment="CENTER_LEFT">
                <children>
+                  <Label fx:id="lKcal" minWidth="100.0" text="kcal:">
+                     <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="fKcal" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT">
+               <children>
                   <Label fx:id="lSugar" minWidth="100.0" text="Zucker:">
                      <font>
                         <Font name="System Bold Italic" size="12.0" />

@@ -30,7 +30,7 @@ Ich habe es auch genutzt, um meine Kenntnisse in **JavaFX**, im Umgang mit **JSO
 
 ### 𞷾 Voraussetzungen
 
-- Java 17 oder neuer  
+- Java 23
 - Maven  
 
 ### 💻 Build & Run
@@ -68,14 +68,16 @@ mvn javafx:run
 ## 📂 Projektstruktur
 
 ```
-src/
-├── main/
-│   ├── java/
-│   │   └── jixo.cook.controller/   → JavaFX Controller (FXML-Logik)
-│   │   └── jixo.cook.scripts/     → Hauptklassen, Datenmodelle, Hilfsmethoden
-│   └── resources/
-│       └── jixo.cool.fxml/        → GUI-Definitionen (FXML-Dateien)
-│       └── jixo.cool.images/      → Grafiken und Icons
+src/main/java/jixo/cook/
+├── domain/               → Datenmodelle & Repository-Interfaces
+├── application/usecase/  → Use Cases (Business-Logik)
+├── infrastructure/       → API, JSON-Repositories, Bildverwaltung, i18n, DI
+└── presentation/         → JavaFX Controller & UI-Komponenten
+
+storage/                  → Lokale Datenspeicherung (wird zur Laufzeit erstellt)
+├── ingredient/           → Zutaten als JSON-Dateien
+├── recipe/               → Rezepte als JSON-Dateien
+└── images/               → Heruntergeladene Bilder
 ```
 
 ---

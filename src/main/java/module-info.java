@@ -5,8 +5,9 @@ module com.jixo.cook.cooksmarter {
     requires java.net.http;
     requires java.desktop;
 
-
-    opens jixo.cook.controller to javafx.fxml;
-    exports jixo.cook.controller;
-    exports jixo.cook.scripts;
+    opens jixo.cook.presentation.controller to javafx.fxml;
+    exports jixo.cook.presentation.controller;
+    exports jixo.cook.domain.model;
+    exports jixo.cook.application.usecase;
+    exports jixo.cook.infrastructure.ui;
 }

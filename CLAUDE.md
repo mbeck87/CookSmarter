@@ -28,33 +28,36 @@ Java 23 is required. No linter is configured.
 CookSmarter is a JavaFX desktop app for managing ingredients and recipes with nutritional data. It uses a local JSON file store and the OpenFoodFacts API.
 
 **Package layout:** `src/main/java/jixo/cook/`
-- `scripts/` — models and core logic
-- `controller/` — JavaFX FXML controllers
+- `domain/` — models (`Ingredient`, `Recipe`, `RecipeIngredient`, `Food`) and repository/gateway interfaces
+- `application/usecase/` — use cases: `SearchIngredientUseCase`, `ImportIngredientUseCase`, `ManageIngredientUseCase`, `CreateRecipeUseCase`, `ManageRecipeUseCase`
+- `infrastructure/` — API gateway (`OpenFoodFactsGateway`), JSON repositories, image repository, i18n (`Translator`), DI config (`AppConfig`), JavaFX entry points
+- `presentation/` — JavaFX FXML controllers and UI components (cards, rows)
 
 **Entry point:** `MainClass.main()` → `InitializeMain.start(Stage)` loads `menu.fxml` and `MenuController`.
 
 ### Key classes
 
-- **`Manager`** (singleton) — central hub: HTTP calls to OpenFoodFacts, JSON read/write via Jackson, image downloading/caching, nutritional calculations.
+- **`AppConfig`** (singleton) — wires all dependencies (repositories, use cases) and initializes storage folders.
 - **`Translator`** (singleton) — HashMap-based German/English i18n.
-- **`Ingredient`** (extends `VBox`) — nutritional model that also renders itself as a clickable card.
-- **`Recipe`** (extends `VBox`) — contains a list of `RecipeIngredient` objects; renders as a card.
-- **`RecipeIngredient`** (extends `GridPane`) — wraps `Ingredient` with a quantity field; recalculates macros in real time.
-- **`Food`** (interface) — shared contract between `Ingredient` and `RecipeIngredient` for nutritional getters/setters.
+- **`Ingredient`** — pure nutritional data model.
+- **`Recipe`** — contains a list of `RecipeIngredient` objects.
+- **`RecipeIngredient`** — wraps `Ingredient` with a quantity field.
+- **`Food`** (interface) — shared contract for nutritional getters/setters.
+- **`IngredientCard`** / **`RecipeCard`** / **`RecipeIngredientRow`** — UI components (extend JavaFX layout classes).
 
 ### Data flow
 
-1. User searches → `ImportIngredientController` → `Manager.search()` → OpenFoodFacts API (Jackson streaming parser).
-2. User confirms import → `Manager.importIngredient()` → saves `ingredient/{name}.json` + caches image to `images/`.
-3. Recipe creation picks ingredients from `ingredient/` JSON files, attaches quantities, saves `recipe/{name}.json`.
-4. `RecipesController.calculateInTotal()` recomputes total macros live as quantities change (per-100g basis; KJ → Kcal via ÷ 4.184).
+1. User searches → `ImportIngredientController` → `SearchIngredientUseCase` → `OpenFoodFactsGateway` → OpenFoodFacts API (Jackson streaming parser).
+2. User confirms import → `ImportIngredientUseCase` → saves `storage/ingredient/{name}.json` + caches image to `storage/images/`.
+3. Recipe creation picks ingredients from `storage/ingredient/` JSON files, attaches quantities, saves `storage/recipe/{name}.json`.
+4. `RecipesController` recomputes total macros live as quantities change (per-100g basis; KJ → Kcal via ÷ 4.184).
 
 ### Local storage
 
-Files are stored relative to the working directory at runtime:
-- `ingredient/{name}.json` — ingredient nutritional data
-- `recipe/{name}.json` — recipe with embedded ingredient list (`menge` field = grams)
-- `images/` — downloaded ingredient/recipe images
+Files are stored under `storage/` relative to the working directory at runtime:
+- `storage/ingredient/{name}.json` — ingredient nutritional data
+- `storage/recipe/{name}.json` — recipe with embedded ingredient list (`menge` field = grams)
+- `storage/images/` — downloaded ingredient/recipe images
 
 ### Module system
 

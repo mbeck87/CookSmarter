@@ -81,23 +81,26 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="kJ (kcal)" />
-                        <Label fx:id="lEnergy" text="0 (0)" GridPane.columnIndex="1" />
-                        <Label text="Zucker:" GridPane.rowIndex="1" />
-                        <Label text="Fett:" GridPane.rowIndex="2" />
-                        <Label fx:id="lSugar" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="lSalt" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label fx:id="lFat" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="Salz:" GridPane.rowIndex="3" />
-                        <Label text="Proteine:" GridPane.rowIndex="4" />
-                        <Label text="Ballaststoffe:" GridPane.rowIndex="5" />
-                        <Label fx:id="lProtein" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label fx:id="lFiber" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="kJ:" />
+                        <Label fx:id="lEnergy" text="0" GridPane.columnIndex="1" />
+                        <Label text="kcal:" GridPane.rowIndex="1" />
+                        <Label fx:id="lKcal" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Zucker:" GridPane.rowIndex="2" />
+                        <Label text="Fett:" GridPane.rowIndex="3" />
+                        <Label fx:id="lSugar" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="lSalt" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label fx:id="lFat" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="Salz:" GridPane.rowIndex="4" />
+                        <Label text="Proteine:" GridPane.rowIndex="5" />
+                        <Label text="Ballaststoffe:" GridPane.rowIndex="6" />
+                        <Label fx:id="lProtein" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label fx:id="lFiber" text="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                      </children>
                      <VBox.margin>
                         <Insets left="50.0" right="50.0" />

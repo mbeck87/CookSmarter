@@ -41,6 +41,4 @@ build/
 dependency-reduced-pom.xml
 
 ### Local data ###
-images/
-ingredient/
-recipe/
+storage/

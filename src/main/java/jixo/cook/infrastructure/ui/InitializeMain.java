@@ -19,8 +19,10 @@ public class InitializeMain extends Application {
         FXMLLoader loader = new FXMLLoader(InitializeMain.class.getResource("/jixo/cook/fxml/menu.fxml"));
         MenuController controller = new MenuController();
         loader.setController(controller);
-        Scene scene = new Scene(loader.load(), 1200, 600);
+        Scene scene = new Scene(loader.load(), 1440, 820);
         stage.setTitle("CookSmarter");
+        stage.setMinWidth(1440);
+        stage.setMinHeight(820);
         stage.setScene(scene);
         stage.show();
     }

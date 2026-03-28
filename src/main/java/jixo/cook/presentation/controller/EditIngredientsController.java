@@ -1,5 +1,6 @@
 package jixo.cook.presentation.controller;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -7,10 +8,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 import jixo.cook.application.usecase.ImportIngredientUseCase;
 import jixo.cook.application.usecase.ManageIngredientUseCase;
 import jixo.cook.domain.model.Ingredient;
 import jixo.cook.infrastructure.config.AppConfig;
+import jixo.cook.presentation.component.AiChatPanel;
 import jixo.cook.presentation.component.IngredientCard;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +34,14 @@ public class EditIngredientsController {
     @FXML private FlowPane flowPane;
     @FXML private ImageView imageView;
     @FXML private ScrollPane scrollPane;
+    @FXML private StackPane chatContainer;
+    @FXML private Button bAi;
 
     private final ManageIngredientUseCase manageUseCase = AppConfig.getInstance().manageIngredient;
     private final ImportIngredientUseCase importUseCase = AppConfig.getInstance().importIngredient;
     private List<Ingredient> ingredientList;
     private IngredientCard selected;
+    private AiChatPanel chatPanel;
 
     @FXML
     void initialize() {
@@ -47,6 +53,16 @@ public class EditIngredientsController {
         imageView.setPreserveRatio(true);
         fEnergy.setOnKeyReleased(e -> updateKcalFromKj());
         fKcal.setOnKeyReleased(e -> updateKjFromKcal());
+
+        chatPanel = new AiChatPanel(AppConfig.getInstance().aiIngredient, this::fillFormFromAi);
+        chatContainer.getChildren().add(chatPanel);
+
+        scrollPane.setOnMouseClicked(e -> {
+            if (e.getTarget() == scrollPane || e.getTarget() == flowPane) {
+                deselect();
+            }
+        });
+
         updateList();
         updateUI(ingredientList);
     }
@@ -81,7 +97,8 @@ public class EditIngredientsController {
         }
         Ingredient ing = new Ingredient();
         ing.setName(fName.getText());
-        ing.setImageUrl(selected.getIngredient().getImageUrl());
+        ing.setImageUrl(selected != null ? selected.getIngredient().getImageUrl()
+                : System.getProperty("user.dir") + "/storage/images/noCover.jpg");
         ing.setEnergy(fEnergy.getText());
         ing.setSugar(fSugar.getText());
         ing.setSaturatedFat(fFat.getText());
@@ -114,7 +131,39 @@ public class EditIngredientsController {
             imageView.setImage(null);
             fName.setText(""); fEnergy.setText(""); fSugar.setText("");
             fFat.setText(""); fSalt.setText(""); fProtein.setText(""); fFiber.setText(""); fCarbohydrates.setText("");
+            chatPanel.setIngredient(null);
         }
+    }
+
+    @FXML
+    void aiAction(ActionEvent event) {
+        String name = fName.getText().trim();
+        if (name.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Hinweis");
+            alert.setHeaderText(null);
+            alert.setContentText("Bitte zuerst einen Namen eingeben oder eine Zutat auswählen.");
+            alert.showAndWait();
+            return;
+        }
+        bAi.setDisable(true);
+        bAi.setText("...");
+        new Thread(() -> {
+            Ingredient created = AppConfig.getInstance().aiIngredient.createFromDescription(name);
+            Platform.runLater(() -> {
+                bAi.setDisable(false);
+                bAi.setText("AI");
+                if (created != null) {
+                    fillFormFromAi(created);
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Fehler");
+                    alert.setHeaderText(null);
+                    alert.setContentText("KI konnte keine Werte für \"" + name + "\" ermitteln.");
+                    alert.showAndWait();
+                }
+            });
+        }).start();
     }
 
     private void updateUI(List<Ingredient> list) {
@@ -136,6 +185,7 @@ public class EditIngredientsController {
             selected = card;
             card.getStyleClass().add("food-card-selected");
             setDetails();
+            chatPanel.setIngredient(card.getIngredient());
         });
     }
 
@@ -179,5 +229,29 @@ public class EditIngredientsController {
         } else {
             return new Image("file:/" + url);
         }
+    }
+
+    private void deselect() {
+        if (selected != null) {
+            selected.getStyleClass().remove("food-card-selected");
+            selected = null;
+        }
+        chatPanel.setIngredient(null);
+        imageView.setImage(null);
+        fName.setText(""); fEnergy.setText(""); fKcal.setText("");
+        fCarbohydrates.setText(""); fSugar.setText(""); fFat.setText("");
+        fSalt.setText(""); fProtein.setText(""); fFiber.setText("");
+    }
+
+    private void fillFormFromAi(Ingredient ing) {
+        fName.setText(ing.getName() != null ? ing.getName() : "");
+        fEnergy.setText(ing.getEnergy() != null ? ing.getEnergy() : "");
+        fKcal.setText(toKcal(ing.getEnergy() != null ? ing.getEnergy() : ""));
+        fCarbohydrates.setText(ing.getCarbohydrates() != null ? ing.getCarbohydrates() : "");
+        fSugar.setText(ing.getSugar() != null ? ing.getSugar() : "");
+        fFat.setText(ing.getSaturatedFat() != null ? ing.getSaturatedFat() : "");
+        fSalt.setText(ing.getSalt() != null ? ing.getSalt() : "");
+        fProtein.setText(ing.getProteins() != null ? ing.getProteins() : "");
+        fFiber.setText(ing.getFiber() != null ? ing.getFiber() : "");
     }
 }

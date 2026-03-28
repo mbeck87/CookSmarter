@@ -390,3 +390,52 @@
     -fx-border-color: #E5E7EB;
     -fx-border-width: 1 0 0 0;
 }
+
+/* ── AI Chat Panel ────────────────────────────────────────── */
+.ai-chat-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 0 1 0 0;
+}
+
+.ai-chat-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #2D6A4F;
+    -fx-background-radius: 0;
+}
+
+.ai-chat-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.ai-chat-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.ai-chat-input {
+    -fx-background-color: #F9FAFB;
+    -fx-border-color: #E5E7EB;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 6 10;
+}
+
+.ai-msg-user {
+    -fx-background-color: #2D6A4F;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 12 12 2 12;
+    -fx-padding: 8 12;
+    -fx-font-size: 12px;
+}
+
+.ai-msg-ai {
+    -fx-background-color: #F3F4F6;
+    -fx-text-fill: #1A1A1A;
+    -fx-background-radius: 12 12 12 2;
+    -fx-padding: 8 12;
+    -fx-font-size: 12px;
+}

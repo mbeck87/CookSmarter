@@ -8,6 +8,7 @@ module com.jixo.cook.cooksmarter {
     opens jixo.cook.presentation.controller to javafx.fxml;
     exports jixo.cook.presentation.controller;
     exports jixo.cook.domain.model;
+    exports jixo.cook.domain.interfaces;
     exports jixo.cook.application.usecase;
     exports jixo.cook.infrastructure.ui;
 }

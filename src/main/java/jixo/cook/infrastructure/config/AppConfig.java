@@ -1,6 +1,7 @@
 package jixo.cook.infrastructure.config;
 
 import jixo.cook.application.usecase.*;
+import jixo.cook.infrastructure.api.GeminiGatewayImpl;
 import jixo.cook.infrastructure.api.OpenFoodFactsGateway;
 import jixo.cook.infrastructure.repositories.FileImageRepository;
 import jixo.cook.infrastructure.repositories.JsonIngredientRepository;
@@ -17,6 +18,7 @@ public class AppConfig {
     public final ManageIngredientUseCase manageIngredient;
     public final CreateRecipeUseCase createRecipe;
     public final ManageRecipeUseCase manageRecipe;
+    public final AiIngredientUseCase aiIngredient;
 
     private AppConfig() {
         initializeFolders();
@@ -37,6 +39,7 @@ public class AppConfig {
         manageIngredient = new ManageIngredientUseCase(ingredientRepository, recipeRepository);
         createRecipe = new CreateRecipeUseCase(recipeRepository, imageRepository);
         manageRecipe = new ManageRecipeUseCase(recipeRepository);
+        aiIngredient = new AiIngredientUseCase(new GeminiGatewayImpl());
     }
 
     public static AppConfig getInstance() {

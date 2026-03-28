@@ -21,7 +21,7 @@
                   <VBox spacing="1.0">
                      <children>
                         <Label styleClass="sidebar-brand-label" text="CookSmarter" />
-                        <Label styleClass="sidebar-brand-sub" text="Küche &amp; Ernährung" />
+                        <Label styleClass="sidebar-brand-sub" text="Gesundheit &amp; Ernährung" />
                      </children>
                   </VBox>
                </children>

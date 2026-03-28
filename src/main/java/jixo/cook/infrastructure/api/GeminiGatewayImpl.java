@@ -38,6 +38,12 @@ public class GeminiGatewayImpl implements GeminiGateway {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
+    private String lastError = null;
+
+    @Override
+    public String getLastError() {
+        return lastError;
+    }
 
     private static String errorMessage(String raw) {
         if (raw == null) return "Unbekannter Fehler.";
@@ -51,7 +57,10 @@ public class GeminiGatewayImpl implements GeminiGateway {
 
     @Override
     public String analyzeIngredient(Ingredient ingredient) {
-        String prompt = "Du bist ein Ernährungsberater. Analysiere diese Zutat auf Deutsch in 3-5 Sätzen:\n" +
+        String prompt = "Du bist ein Ernährungsberater. Analysiere diese Zutat auf Deutsch in 3-5 Sätzen.\n" +
+                "Weise außerdem explizit darauf hin, wenn ein Wert fehlt (z.B. 'unbekannt'), " +
+                "offensichtlich falsch ist (z.B. Zucker > Kohlenhydrate, negative Werte) " +
+                "oder unverhältnismäßig hoch/niedrig für dieses Lebensmittel erscheint.\n\n" +
                 "Name: " + ingredient.getName() +
                 ", Energie: " + ingredient.getEnergy() + " kJ" +
                 ", Kohlenhydrate: " + ingredient.getCarbohydrates() + " g" +
@@ -73,7 +82,9 @@ public class GeminiGatewayImpl implements GeminiGateway {
                 "Alle Nährwert-Werte sind Zahlen als String mit Punkt als Dezimaltrennzeichen.";
 
         String response = sendRequest(prompt);
-        if (response == null || response.startsWith("ERROR:")) return null;
+        if (response == null) { lastError = "Keine Antwort erhalten."; return null; }
+        if (response.startsWith("ERROR:")) { lastError = errorMessage(response); return null; }
+        lastError = null;
 
         try {
             String json = response.trim();

@@ -18,4 +18,8 @@ public class AiIngredientUseCase {
     public Ingredient createFromDescription(String description) {
         return gateway.createFromDescription(description);
     }
+
+    public String getLastError() {
+        return gateway.getLastError();
+    }
 }

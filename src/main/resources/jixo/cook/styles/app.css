@@ -419,9 +419,15 @@
 .ai-chat-input {
     -fx-background-color: #F9FAFB;
     -fx-border-color: #E5E7EB;
+    -fx-border-width: 1;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-padding: 6 10;
+}
+
+.ai-chat-input:focused {
+    -fx-border-color: #52B788;
+    -fx-background-color: #FFFFFF;
 }
 
 .ai-msg-user {
@@ -454,4 +460,30 @@
 .ai-mode-btn-active {
     -fx-background-color: #52B788;
     -fx-text-fill: #FFFFFF;
+}
+
+.ai-action-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2D6A4F;
+    -fx-border-color: #52B788;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 12;
+    -fx-cursor: hand;
+}
+
+.ai-action-btn:hover {
+    -fx-background-color: rgba(82,183,136,0.10);
+    -fx-border-color: #2D6A4F;
+}
+
+.ai-action-btn:disabled {
+    -fx-background-color: transparent;
+    -fx-text-fill: #C0C7D0;
+    -fx-border-color: #D1D5DB;
+    -fx-cursor: default;
+    -fx-opacity: 1;
 }

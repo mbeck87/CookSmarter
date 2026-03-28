@@ -1,6 +1,5 @@
 package jixo.cook.presentation.controller;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -35,8 +34,6 @@ public class EditIngredientsController {
     @FXML private ImageView imageView;
     @FXML private ScrollPane scrollPane;
     @FXML private StackPane chatContainer;
-    @FXML private Button bAi;
-    @FXML private Button bAiInfo;
 
     private final ManageIngredientUseCase manageUseCase = AppConfig.getInstance().manageIngredient;
     private final ImportIngredientUseCase importUseCase = AppConfig.getInstance().importIngredient;
@@ -134,50 +131,6 @@ public class EditIngredientsController {
             fFat.setText(""); fSalt.setText(""); fProtein.setText(""); fFiber.setText(""); fCarbohydrates.setText("");
             chatPanel.setIngredient(null);
         }
-    }
-
-    @FXML
-    void aiInfoAction(ActionEvent event) {
-        if (selected == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Hinweis");
-            alert.setHeaderText(null);
-            alert.setContentText("Bitte zuerst eine Zutat auswählen.");
-            alert.showAndWait();
-            return;
-        }
-        chatPanel.showAnalysis(selected.getIngredient());
-    }
-
-    @FXML
-    void aiAction(ActionEvent event) {
-        String name = fName.getText().trim();
-        if (name.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Hinweis");
-            alert.setHeaderText(null);
-            alert.setContentText("Bitte zuerst einen Namen eingeben oder eine Zutat auswählen.");
-            alert.showAndWait();
-            return;
-        }
-        bAi.setDisable(true);
-        bAi.setText("...");
-        new Thread(() -> {
-            Ingredient created = AppConfig.getInstance().aiIngredient.createFromDescription(name);
-            Platform.runLater(() -> {
-                bAi.setDisable(false);
-                bAi.setText("AI");
-                if (created != null) {
-                    fillFormFromAi(created);
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Fehler");
-                    alert.setHeaderText(null);
-                    alert.setContentText("KI konnte keine Werte für \"" + name + "\" ermitteln.");
-                    alert.showAndWait();
-                }
-            });
-        }).start();
     }
 
     private void updateUI(List<Ingredient> list) {

@@ -23,6 +23,9 @@ public class AiChatPanel extends VBox {
     private final VBox chatMessages = new VBox(8);
     private final TextField inputField = new TextField();
     private final Button sendButton = new Button("Senden");
+    private final Button btnInfo = new Button("Info");
+    private final Button btnNaehrwerte = new Button("Nährwerte");
+    private Ingredient currentIngredient = null;
     private boolean waiting = false;
 
     public AiChatPanel(AiIngredientUseCase useCase, Consumer<Ingredient> onIngredientCreated) {
@@ -32,22 +35,14 @@ public class AiChatPanel extends VBox {
     }
 
     public void setIngredient(Ingredient ingredient) {
-        // kept for deselect-reset, no mode logic needed
+        this.currentIngredient = ingredient;
+        btnInfo.setDisable(ingredient == null);
+        btnNaehrwerte.setDisable(ingredient == null);
     }
 
     public void showAnalysis(Ingredient ingredient) {
-        if (waiting) return;
-        addAiMessage("Analysiere " + ingredient.getName() + " …");
-        waiting = true;
-        inputField.setDisable(true);
-        sendButton.setDisable(true);
-        new Thread(() -> {
-            String response = useCase.analyze(ingredient);
-            Platform.runLater(() -> {
-                addAiMessage(response != null ? response : "Keine Antwort erhalten.");
-                done();
-            });
-        }).start();
+        // kept for external calls if needed
+        triggerAnalysis(ingredient);
     }
 
     private void build() {
@@ -59,6 +54,23 @@ public class AiChatPanel extends VBox {
         title.getStyleClass().add("ai-chat-title");
         title.setMaxWidth(Double.MAX_VALUE);
         title.setPadding(new Insets(12, 16, 12, 16));
+
+        btnInfo.getStyleClass().add("ai-action-btn");
+        btnInfo.setDisable(true);
+        btnInfo.setMaxWidth(Double.MAX_VALUE);
+        btnInfo.setOnAction(e -> {
+            if (currentIngredient != null) triggerAnalysis(currentIngredient);
+        });
+
+        btnNaehrwerte.getStyleClass().add("ai-action-btn");
+        btnNaehrwerte.setDisable(true);
+        btnNaehrwerte.setMaxWidth(Double.MAX_VALUE);
+        btnNaehrwerte.setOnAction(e -> triggerNaehrwerte());
+
+        HBox.setHgrow(btnInfo, Priority.ALWAYS);
+        HBox.setHgrow(btnNaehrwerte, Priority.ALWAYS);
+        HBox actionRow = new HBox(8, btnInfo, btnNaehrwerte);
+        actionRow.setPadding(new Insets(10, 12, 6, 12));
 
         chatMessages.setPadding(new Insets(12));
         chatMessages.setFillWidth(true);
@@ -72,23 +84,59 @@ public class AiChatPanel extends VBox {
         chatMessages.heightProperty().addListener((obs, old, val) ->
                 scroll.setVvalue(1.0));
 
-        addAiMessage("Hallo! Beschreibe ein Lebensmittel und ich erstelle die Nährwerte dafür.");
+        addAiMessage("Hallo! Beschreibe ein Lebensmittel und ich erstelle die Nährwerte dafür. Oder wähle eine Zutat aus und nutze die Buttons oben.");
 
         inputField.setPromptText("Lebensmittel beschreiben (z.B. Weizenmehl) …");
         inputField.getStyleClass().add("ai-chat-input");
         inputField.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) send();
         });
+        inputField.setOnMouseClicked(e -> inputField.requestFocus());
         HBox.setHgrow(inputField, Priority.ALWAYS);
 
         sendButton.getStyleClass().add("btn-primary");
         sendButton.setOnAction(e -> send());
 
         HBox inputRow = new HBox(8, inputField, sendButton);
-        inputRow.setPadding(new Insets(10, 12, 12, 12));
+        inputRow.setPadding(new Insets(6, 12, 12, 12));
         inputRow.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(title, scroll, inputRow);
+        getChildren().addAll(title, actionRow, scroll, inputRow);
+    }
+
+    private void triggerAnalysis(Ingredient ingredient) {
+        if (waiting) return;
+        addAiMessage("Analysiere " + ingredient.getName() + " …");
+        waiting = true;
+        setButtonsDisabled(true);
+        new Thread(() -> {
+            String response = useCase.analyze(ingredient);
+            Platform.runLater(() -> {
+                addAiMessage(response != null ? response : "Keine Antwort erhalten.");
+                done();
+            });
+        }).start();
+    }
+
+    private void triggerNaehrwerte() {
+        if (waiting) return;
+        String name = currentIngredient.getName();
+        addAiMessage("Erstelle Nährwerte für \"" + name + "\" …");
+        waiting = true;
+        setButtonsDisabled(true);
+        new Thread(() -> {
+            Ingredient created = useCase.createFromDescription(name);
+            String err = useCase.getLastError();
+            Platform.runLater(() -> {
+                if (created != null) {
+                    addAiMessage("Nährwerte für \"" + created.getName() + "\" wurden ins Formular eingetragen. Bitte prüfen und Speichern klicken.");
+                    onIngredientCreated.accept(created);
+                } else {
+                    addAiMessage(err != null ? err : "Ich konnte keine Nährwerte für \"" + name + "\" ermitteln.");
+                }
+                done();
+            });
+        }).start();
     }
 
     private void send() {
@@ -98,17 +146,17 @@ public class AiChatPanel extends VBox {
         addUserMessage(text);
         inputField.clear();
         waiting = true;
-        inputField.setDisable(true);
-        sendButton.setDisable(true);
+        setButtonsDisabled(true);
 
         new Thread(() -> {
             Ingredient created = useCase.createFromDescription(text);
+            String err = useCase.getLastError();
             Platform.runLater(() -> {
                 if (created != null) {
-                    addAiMessage("Ich habe die Nährwerte für \"" + created.getName() + "\" erstellt und in das Formular eingetragen. Bitte prüfe die Werte und klicke auf Speichern.");
+                    addAiMessage("Nährwerte für \"" + created.getName() + "\" wurden ins Formular eingetragen. Bitte prüfen und Speichern klicken.");
                     onIngredientCreated.accept(created);
                 } else {
-                    addAiMessage("Ich konnte keine Nährwerte für diese Beschreibung ermitteln. Bitte versuche es erneut.");
+                    addAiMessage(err != null ? err : "Ich konnte keine Nährwerte für diese Beschreibung ermitteln. Bitte versuche es erneut.");
                 }
                 done();
             });
@@ -117,8 +165,14 @@ public class AiChatPanel extends VBox {
 
     private void done() {
         waiting = false;
-        inputField.setDisable(false);
-        sendButton.setDisable(false);
+        setButtonsDisabled(false);
+    }
+
+    private void setButtonsDisabled(boolean disabled) {
+        btnInfo.setDisable(disabled || currentIngredient == null);
+        btnNaehrwerte.setDisable(disabled || currentIngredient == null);
+        inputField.setDisable(disabled);
+        sendButton.setDisable(disabled);
     }
 
     private void addUserMessage(String text) {
@@ -126,7 +180,6 @@ public class AiChatPanel extends VBox {
         label.setWrapText(true);
         label.setMaxWidth(220);
         label.getStyleClass().add("ai-msg-user");
-
         HBox row = new HBox(label);
         row.setAlignment(Pos.CENTER_RIGHT);
         chatMessages.getChildren().add(row);
@@ -137,7 +190,6 @@ public class AiChatPanel extends VBox {
         label.setWrapText(true);
         label.setMaxWidth(220);
         label.getStyleClass().add("ai-msg-ai");
-
         HBox row = new HBox(label);
         row.setAlignment(Pos.CENTER_LEFT);
         chatMessages.getChildren().add(row);

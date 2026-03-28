@@ -7,4 +7,6 @@ public interface GeminiGateway {
     String analyzeIngredient(Ingredient ingredient);
 
     Ingredient createFromDescription(String description);
+
+    String getLastError();
 }

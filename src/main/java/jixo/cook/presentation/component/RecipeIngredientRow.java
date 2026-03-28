@@ -1,6 +1,7 @@
 package jixo.cook.presentation.component;
 
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -22,11 +23,16 @@ public class RecipeIngredientRow extends GridPane {
     public RecipeIngredientRow(RecipeIngredient ingredient) {
         this.ingredient = ingredient;
 
+        this.getStyleClass().add("ingredient-row");
+        this.setHgap(8);
+        this.setVgap(0);
+        GridPane.setMargin(this, new Insets(0, 0, 4, 0));
+
         ColumnConstraints col = new ColumnConstraints();
-        col.setPercentWidth(20);
+        col.setPercentWidth(18);
         this.getColumnConstraints().add(col);
         col = new ColumnConstraints();
-        col.setPercentWidth(40);
+        col.setPercentWidth(42);
         this.getColumnConstraints().add(col);
         col = new ColumnConstraints();
         col.setPercentWidth(25);
@@ -37,11 +43,12 @@ public class RecipeIngredientRow extends GridPane {
 
         ImageView view = new ImageView(new Image("file:/" + ingredient.getImageUrl()));
         view.setPreserveRatio(true);
-        view.setFitWidth(50);
-        view.setFitHeight(50);
+        view.setFitWidth(40);
+        view.setFitHeight(40);
         this.add(view, 0, 0);
 
         Label label = new Label(ingredient.getName());
+        label.getStyleClass().add("ingredient-row-label");
         label.setWrapText(true);
         label.setMaxHeight(50);
         this.add(label, 1, 0);
@@ -51,10 +58,12 @@ public class RecipeIngredientRow extends GridPane {
             validNumberPattern.matcher(change.getControlNewText()).matches() ? change : null;
 
         field = new TextField();
+        field.getStyleClass().add("ingredient-row-field");
         field.setTextFormatter(new TextFormatter<>(filter));
         this.add(field, 2, 0);
 
-        button = new Button("del");
+        button = new Button("✕");
+        button.getStyleClass().add("btn-del");
         GridPane.setHalignment(button, HPos.CENTER);
         this.add(button, 3, 0);
     }

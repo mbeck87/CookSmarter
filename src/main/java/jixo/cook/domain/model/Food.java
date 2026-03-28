@@ -25,4 +25,7 @@ public interface Food {
 
     String getFiber();
     void setFiber(String fiber);
+
+    String getCarbohydrates();
+    void setCarbohydrates(String carbohydrates);
 }

@@ -16,23 +16,18 @@ import jixo.cook.infrastructure.config.AppConfig;
 import jixo.cook.infrastructure.i18n.Translator;
 import jixo.cook.presentation.component.IngredientCard;
 import java.util.List;
+import java.util.Locale;
 
 public class ImportIngredientController {
 
     @FXML private Button bImport;
     @FXML private Label lCreateIngredient;
-    @FXML private Label lEnergy;
-    @FXML private Label lFat;
-    @FXML private Label lFiber;
-    @FXML private Label lName;
-    @FXML private Label lProtein;
-    @FXML private Label lSalt;
-    @FXML private Label lSugar;
-    @FXML private Label lSearch;
+
     @FXML private TextField fEnergy;
     @FXML private TextField fKcal;
     @FXML private TextField fFat;
     @FXML private TextField fFiber;
+    @FXML private TextField fCarbohydrates;
     @FXML private TextField fName;
     @FXML private TextField fProtein;
     @FXML private TextField fSalt;
@@ -54,7 +49,7 @@ public class ImportIngredientController {
         flowPane.setVgap(5);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: lightblue; -fx-background-color: lightblue");
+        scrollPane.getStyleClass().add("content-scroll");
         imageView.setPreserveRatio(true);
         fEnergy.setOnKeyReleased(e -> updateKcalFromKj());
         fKcal.setOnKeyReleased(e -> updateKjFromKcal());
@@ -72,7 +67,7 @@ public class ImportIngredientController {
     void importAction(ActionEvent event) {
         if (fName.getText().isEmpty() || fEnergy.getText().isEmpty() || fSugar.getText().isEmpty()
                 || fFat.getText().isEmpty() || fSalt.getText().isEmpty() || fProtein.getText().isEmpty()
-                || fFiber.getText().isEmpty()) {
+                || fFiber.getText().isEmpty() || fCarbohydrates.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fehler");
             alert.setHeaderText("Ein Fehler ist aufgetreten");
@@ -89,6 +84,7 @@ public class ImportIngredientController {
         ing.setSalt(fSalt.getText());
         ing.setProteins(fProtein.getText());
         ing.setFiber(fFiber.getText());
+        ing.setCarbohydrates(fCarbohydrates.getText());
         importUseCase.importIngredient(ing);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");
@@ -118,16 +114,10 @@ public class ImportIngredientController {
     }
 
     private void addListener(IngredientCard card) {
-        card.setOnMouseEntered(event -> {
-            if (!card.equals(selected)) card.setStyle("-fx-background-color: cornflowerblue; -fx-background-radius: 10px;");
-        });
-        card.setOnMouseExited(event -> {
-            if (!card.equals(selected)) card.setStyle("-fx-background-color: rgba(100, 149, 237, 0.4); -fx-background-radius: 10px;");
-        });
         card.setOnMouseClicked(event -> {
-            if (selected != null) selected.setStyle("-fx-background-color: rgba(100, 149, 237, 0.4); -fx-background-radius: 10px;");
+            if (selected != null) selected.getStyleClass().remove("food-card-selected");
             selected = card;
-            card.setStyle("-fx-background-color: darkcyan; -fx-background-radius: 10px;");
+            card.getStyleClass().add("food-card-selected");
             setDetails();
         });
     }
@@ -143,6 +133,7 @@ public class ImportIngredientController {
         fSalt.setText(getValue(ing.getSalt()));
         fProtein.setText(getValue(ing.getProteins()));
         fFiber.setText(getValue(ing.getFiber()));
+        fCarbohydrates.setText(getValue(ing.getCarbohydrates()));
     }
 
     private void updateKcalFromKj() {
@@ -151,15 +142,15 @@ public class ImportIngredientController {
 
     private void updateKjFromKcal() {
         try {
-            double kcal = Double.parseDouble(fKcal.getText());
-            fEnergy.setText(String.format("%.2f", kcal * 4.184));
+            double kcal = Double.parseDouble(fKcal.getText().replace(",", "."));
+            fEnergy.setText(String.format(Locale.US, "%.2f", kcal * 4.184));
         } catch (NumberFormatException ignored) {}
     }
 
     private String toKcal(String kj) {
         try {
-            double val = Double.parseDouble(kj);
-            return String.format("%.2f", val / 4.184);
+            double val = Double.parseDouble(kj.replace(",", "."));
+            return String.format(Locale.US, "%.2f", val / 4.184);
         } catch (NumberFormatException e) {
             return "";
         }
@@ -181,13 +172,5 @@ public class ImportIngredientController {
     public void setLanguage() {
         bImport.setText(translator.get("bImport"));
         lCreateIngredient.setText(translator.get("lCreateIngredient"));
-        lEnergy.setText(translator.get("lEnergy"));
-        lFat.setText(translator.get("lFat"));
-        lFiber.setText(translator.get("lFiber"));
-        lName.setText(translator.get("lName"));
-        lProtein.setText(translator.get("lProtein"));
-        lSalt.setText(translator.get("lSalt"));
-        lSugar.setText(translator.get("lSugar"));
-        lSearch.setText(translator.get("lSearch"));
     }
 }

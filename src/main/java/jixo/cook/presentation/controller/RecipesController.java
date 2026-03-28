@@ -18,6 +18,7 @@ import jixo.cook.presentation.component.RecipeCard;
 import jixo.cook.presentation.component.RecipeIngredientRow;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class RecipesController {
 
@@ -34,6 +35,7 @@ public class RecipesController {
     @FXML private Label lProtein;
     @FXML private Label lSalt;
     @FXML private Label lSugar;
+    @FXML private Label lCarbohydrates;
     @FXML private VBox recipeBox;
     @FXML private ScrollPane recipeScroll;
     @FXML private ScrollPane scrollPane;
@@ -56,7 +58,7 @@ public class RecipesController {
         flowPane.setVgap(5);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: lightblue; -fx-background-color: lightblue");
+        scrollPane.getStyleClass().add("content-scroll");
         bEdit.setVisible(false);
         bSave.setVisible(false);
         bDelete.setVisible(false);
@@ -82,6 +84,11 @@ public class RecipesController {
 
     @FXML
     void deleteAction(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Bestätigung");
+        alert.setHeaderText("Rezept wirklich löschen?");
+        alert.setContentText("\"" + selectedRecipe.getRecipeName() + "\" wird dauerhaft gelöscht.");
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
         imageView.setImage(null);
         resetDetails();
         bEdit.setVisible(false);
@@ -130,16 +137,10 @@ public class RecipesController {
     }
 
     private void addListener(RecipeCard card) {
-        card.setOnMouseEntered(event -> {
-            if (!card.equals(selectedCard)) card.setStyle("-fx-background-color: cornflowerblue; -fx-background-radius: 10px;");
-        });
-        card.setOnMouseExited(event -> {
-            if (!card.equals(selectedCard)) card.setStyle("-fx-background-color: rgba(100, 149, 237, 0.4); -fx-background-radius: 10px;");
-        });
         card.setOnMouseClicked(event -> {
-            if (selectedCard != null) selectedCard.setStyle("-fx-background-color: rgba(100, 149, 237, 0.4); -fx-background-radius: 10px;");
+            if (selectedCard != null) selectedCard.getStyleClass().remove("food-card-selected");
             selectedCard = card;
-            card.setStyle("-fx-background-color: darkcyan; -fx-background-radius: 10px;");
+            card.getStyleClass().add("food-card-selected");
             selectedRecipe = card.getRecipe();
             bEdit.setVisible(true);
             bSave.setVisible(true);
@@ -167,7 +168,7 @@ public class RecipesController {
     }
 
     private void calculateInTotal(Recipe recipe) {
-        double[] total = new double[6];
+        double[] total = new double[7];
         for (RecipeIngredient ri : recipe.getIngredients()) {
             String menge = (ri.getMenge() == null || ri.getMenge().isEmpty()) ? "0" : ri.getMenge();
             total[0] += getValue(menge, ri.getEnergy());
@@ -176,6 +177,7 @@ public class RecipesController {
             total[3] += getValue(menge, ri.getSalt());
             total[4] += getValue(menge, ri.getProteins());
             total[5] += getValue(menge, ri.getFiber());
+            total[6] += getValue(menge, ri.getCarbohydrates());
         }
         lEnergy.setText(format(total[0]));
         lKcal.setText(format(NutritionalInfo.getKcal(total[0])));
@@ -184,21 +186,22 @@ public class RecipesController {
         lSalt.setText(format(total[3]));
         lProtein.setText(format(total[4]));
         lFiber.setText(format(total[5]));
+        lCarbohydrates.setText(format(total[6]));
     }
 
     private double getValue(String amount, String value) {
-        double doubleAmount = Double.parseDouble(amount);
+        double doubleAmount = Double.parseDouble(amount.replace(",", "."));
         double val = check(value);
         return doubleAmount / 100.0 * val;
     }
 
     private String format(double value) {
-        return String.format("%.2f", value);
+        return String.format(Locale.US, "%.2f", value);
     }
 
     private double check(String text) {
         try {
-            return Double.parseDouble(text);
+            return Double.parseDouble(text.replace(",", "."));
         } catch (NumberFormatException e) {
             return 0.0;
         }

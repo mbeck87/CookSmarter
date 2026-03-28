@@ -16,95 +16,86 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="834.0" prefWidth="1204.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="834.0" prefWidth="1204.0" stylesheets="@../styles/app.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <AnchorPane prefHeight="112.0" prefWidth="1204.0" style="-fx-background-color: lightblue;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="90.0" prefWidth="1204.0" styleClass="header" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="fSearch" layoutX="70.0" layoutY="66.0" onKeyReleased="#SearchKeyReleased" prefHeight="25.0" prefWidth="460.0" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="66.0" />
-            <Label layoutX="70.0" layoutY="49.0" text="Suche" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="49.0" />
-            <StackPane layoutX="-4.0" prefHeight="49.0" prefWidth="1212.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <StackPane prefHeight="46.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label text="Rezepte">
-                     <font>
-                        <Font name="System Bold Italic" size="14.0" />
-                     </font>
-                  </Label>
+                  <Label styleClass="header-title" text="Rezepte" />
                </children>
             </StackPane>
+            <TextField fx:id="fSearch" onKeyReleased="#SearchKeyReleased" prefHeight="30.0" promptText="Suchen …" styleClass="search-field" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="60.0" />
          </children>
       </AnchorPane>
    </top>
    <center>
-      <ScrollPane fx:id="scrollPane" BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="scrollPane" styleClass="content-scroll" BorderPane.alignment="CENTER">
          <content>
-            <FlowPane fx:id="flowPane" />
+            <FlowPane fx:id="flowPane" styleClass="content-flow" />
          </content>
       </ScrollPane>
    </center>
    <right>
-      <ScrollPane fx:id="recipeScroll" hbarPolicy="NEVER" prefHeight="722.0" prefWidth="584.0" style="-fx-background: cornflowerblue;" BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="recipeScroll" fitToWidth="true" hbarPolicy="NEVER" prefHeight="744.0" prefWidth="300.0" styleClass="detail-panel-scroll" BorderPane.alignment="CENTER">
          <content>
-            <VBox fx:id="recipeBox" prefHeight="484.0" prefWidth="583.0" spacing="5.0">
+            <VBox fx:id="recipeBox" spacing="10.0" styleClass="detail-panel">
                <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                </padding>
                <children>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" spacing="12.0">
                      <children>
-                        <ImageView fx:id="imageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-                           <HBox.margin>
-                              <Insets left="50.0" />
-                           </HBox.margin>
-                        </ImageView>
-                        <VBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="58.0">
+                        <StackPane alignment="CENTER" prefHeight="115.0" prefWidth="115.0" styleClass="image-container">
                            <children>
-                              <Button fx:id="bEdit" mnemonicParsing="false" onAction="#editAction" prefWidth="53.0" text="Edit" />
-                              <Button fx:id="bSave" mnemonicParsing="false" onAction="#saveAction" prefWidth="53.0" text="Save" />
-                              <Button fx:id="bDelete" mnemonicParsing="false" onAction="#deleteAction" prefWidth="53.0" text="Delete" />
+                              <ImageView fx:id="imageView" fitHeight="103.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </StackPane>
+                        <VBox alignment="CENTER" spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="bEdit" maxWidth="Infinity" mnemonicParsing="false" onAction="#editAction" styleClass="btn-secondary" text="Bearbeiten" />
+                              <Button fx:id="bSave" maxWidth="Infinity" mnemonicParsing="false" onAction="#saveAction" styleClass="btn-primary" text="Speichern" />
+                              <Button fx:id="bDelete" maxWidth="Infinity" mnemonicParsing="false" onAction="#deleteAction" styleClass="btn-danger" text="Löschen" />
                            </children>
                         </VBox>
                      </children>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <padding>
-                        <Insets bottom="10.0" />
-                     </padding>
                   </HBox>
-                  <GridPane alignment="CENTER" minHeight="-Infinity" prefHeight="85.0" prefWidth="156.0">
+                  <GridPane hgap="8.0" vgap="4.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="175.0" minWidth="10.0" prefWidth="131.0" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="132.0" minWidth="10.0" prefWidth="95.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="80.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="70.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="24.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="24.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="24.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="24.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="24.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="24.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="24.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="24.0" prefHeight="24.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="kJ:" />
-                        <Label fx:id="lEnergy" text="0" GridPane.columnIndex="1" />
-                        <Label text="kcal:" GridPane.rowIndex="1" />
-                        <Label fx:id="lKcal" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label text="Zucker:" GridPane.rowIndex="2" />
-                        <Label text="Fett:" GridPane.rowIndex="3" />
-                        <Label fx:id="lSugar" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="lSalt" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label fx:id="lFat" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label text="Salz:" GridPane.rowIndex="4" />
-                        <Label text="Proteine:" GridPane.rowIndex="5" />
-                        <Label text="Ballaststoffe:" GridPane.rowIndex="6" />
-                        <Label fx:id="lProtein" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <Label fx:id="lFiber" text="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label styleClass="nutrition-label" text="Energie (kJ)" />
+                        <Label fx:id="lEnergy" styleClass="nutrition-value" text="0" GridPane.columnIndex="1" />
+                        <Label styleClass="nutrition-label" text="Kalorien (kcal)" GridPane.rowIndex="1" />
+                        <Label fx:id="lKcal" styleClass="nutrition-value" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label styleClass="nutrition-label" text="Kohlenhydrate (g)" GridPane.rowIndex="2" />
+                        <Label fx:id="lCarbohydrates" styleClass="nutrition-value" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label styleClass="nutrition-label" text="Zucker (g)" GridPane.rowIndex="3" />
+                        <Label fx:id="lSugar" styleClass="nutrition-value" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label styleClass="nutrition-label" text="Fett (g)" GridPane.rowIndex="4" />
+                        <Label fx:id="lFat" styleClass="nutrition-value" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label styleClass="nutrition-label" text="Salz (g)" GridPane.rowIndex="5" />
+                        <Label fx:id="lSalt" styleClass="nutrition-value" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label styleClass="nutrition-label" text="Proteine (g)" GridPane.rowIndex="6" />
+                        <Label fx:id="lProtein" styleClass="nutrition-value" text="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label styleClass="nutrition-label" text="Ballaststoffe (g)" GridPane.rowIndex="7" />
+                        <Label fx:id="lFiber" styleClass="nutrition-value" text="0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                      </children>
                   </GridPane>
-                  <TextArea fx:id="textArea" prefHeight="349.0" prefWidth="276.0" />
+                  <TextArea fx:id="textArea" prefHeight="280.0" prefWidth="307.0" styleClass="notes-area" wrapText="true" />
                </children>
             </VBox>
          </content>

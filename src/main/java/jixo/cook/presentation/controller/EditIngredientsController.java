@@ -14,6 +14,7 @@ import jixo.cook.infrastructure.config.AppConfig;
 import jixo.cook.presentation.component.IngredientCard;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class EditIngredientsController {
 
@@ -21,6 +22,7 @@ public class EditIngredientsController {
     @FXML private TextField fKcal;
     @FXML private TextField fFat;
     @FXML private TextField fFiber;
+    @FXML private TextField fCarbohydrates;
     @FXML private TextField fName;
     @FXML private TextField fProtein;
     @FXML private TextField fSalt;
@@ -41,7 +43,7 @@ public class EditIngredientsController {
         flowPane.setVgap(5);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: lightblue; -fx-background-color: lightblue");
+        scrollPane.getStyleClass().add("content-scroll");
         imageView.setPreserveRatio(true);
         fEnergy.setOnKeyReleased(e -> updateKcalFromKj());
         fKcal.setOnKeyReleased(e -> updateKjFromKcal());
@@ -69,7 +71,7 @@ public class EditIngredientsController {
     void okayAction(ActionEvent event) {
         if (fName.getText().isEmpty() || fEnergy.getText().isEmpty() || fSugar.getText().isEmpty()
                 || fFat.getText().isEmpty() || fSalt.getText().isEmpty() || fProtein.getText().isEmpty()
-                || fFiber.getText().isEmpty()) {
+                || fFiber.getText().isEmpty() || fCarbohydrates.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fehler");
             alert.setHeaderText("Ein Fehler ist aufgetreten");
@@ -86,6 +88,7 @@ public class EditIngredientsController {
         ing.setSalt(fSalt.getText());
         ing.setProteins(fProtein.getText());
         ing.setFiber(fFiber.getText());
+        ing.setCarbohydrates(fCarbohydrates.getText());
         importUseCase.importIngredient(ing);
         updateList();
         updateUI(ingredientList);
@@ -110,7 +113,7 @@ public class EditIngredientsController {
             updateUI(ingredientList);
             imageView.setImage(null);
             fName.setText(""); fEnergy.setText(""); fSugar.setText("");
-            fFat.setText(""); fSalt.setText(""); fProtein.setText(""); fFiber.setText("");
+            fFat.setText(""); fSalt.setText(""); fProtein.setText(""); fFiber.setText(""); fCarbohydrates.setText("");
         }
     }
 
@@ -128,16 +131,10 @@ public class EditIngredientsController {
     }
 
     private void addListener(IngredientCard card) {
-        card.setOnMouseEntered(event -> {
-            if (!card.equals(selected)) card.setStyle("-fx-background-color: cornflowerblue; -fx-background-radius: 10px;");
-        });
-        card.setOnMouseExited(event -> {
-            if (!card.equals(selected)) card.setStyle("-fx-background-color: rgba(100, 149, 237, 0.4); -fx-background-radius: 10px;");
-        });
         card.setOnMouseClicked(event -> {
-            if (selected != null) selected.setStyle("-fx-background-color: rgba(100, 149, 237, 0.4); -fx-background-radius: 10px;");
+            if (selected != null) selected.getStyleClass().remove("food-card-selected");
             selected = card;
-            card.setStyle("-fx-background-color: darkcyan; -fx-background-radius: 10px;");
+            card.getStyleClass().add("food-card-selected");
             setDetails();
         });
     }
@@ -153,6 +150,7 @@ public class EditIngredientsController {
         fSalt.setText(ing.getSalt());
         fProtein.setText(ing.getProteins());
         fFiber.setText(ing.getFiber());
+        fCarbohydrates.setText(ing.getCarbohydrates());
     }
 
     private void updateKcalFromKj() {
@@ -161,15 +159,15 @@ public class EditIngredientsController {
 
     private void updateKjFromKcal() {
         try {
-            double kcal = Double.parseDouble(fKcal.getText());
-            fEnergy.setText(String.format("%.2f", kcal * 4.184));
+            double kcal = Double.parseDouble(fKcal.getText().replace(",", "."));
+            fEnergy.setText(String.format(Locale.US, "%.2f", kcal * 4.184));
         } catch (NumberFormatException ignored) {}
     }
 
     private String toKcal(String kj) {
         try {
-            double val = Double.parseDouble(kj);
-            return String.format("%.2f", val / 4.184);
+            double val = Double.parseDouble(kj.replace(",", "."));
+            return String.format(Locale.US, "%.2f", val / 4.184);
         } catch (NumberFormatException e) {
             return "";
         }

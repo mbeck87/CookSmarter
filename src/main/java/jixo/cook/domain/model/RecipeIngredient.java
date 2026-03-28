@@ -11,6 +11,7 @@ public class RecipeIngredient implements Food {
     private String salt;
     private String proteins;
     private String fiber;
+    private String carbohydrates;
 
     public RecipeIngredient() {}
 
@@ -23,6 +24,7 @@ public class RecipeIngredient implements Food {
         this.salt = ingredient.getSalt();
         this.proteins = ingredient.getProteins();
         this.fiber = ingredient.getFiber();
+        this.carbohydrates = ingredient.getCarbohydrates();
     }
 
     public void setMenge(String menge) { this.menge = menge; }
@@ -44,4 +46,6 @@ public class RecipeIngredient implements Food {
     @Override public void setProteins(String proteins) { this.proteins = proteins; }
     @Override public String getFiber() { return fiber; }
     @Override public void setFiber(String fiber) { this.fiber = fiber; }
+    @Override public String getCarbohydrates() { return carbohydrates; }
+    @Override public void setCarbohydrates(String carbohydrates) { this.carbohydrates = carbohydrates; }
 }

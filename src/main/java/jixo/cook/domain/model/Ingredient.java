@@ -12,6 +12,7 @@ public class Ingredient implements Food {
     private String salt;
     private String proteins;
     private String fiber;
+    private String carbohydrates;
 
     public Ingredient() {}
 
@@ -37,6 +38,7 @@ public class Ingredient implements Food {
         ingredient.setSalt(nutriValue(n, "salt_100g"));
         ingredient.setProteins(nutriValue(n, "proteins_100g"));
         ingredient.setFiber(nutriValue(n, "fiber_100g"));
+        ingredient.setCarbohydrates(nutriValue(n, "carbohydrates_100g"));
 
         return ingredient;
     }
@@ -64,4 +66,6 @@ public class Ingredient implements Food {
     @Override public void setProteins(String proteins) { this.proteins = proteins; }
     @Override public String getFiber() { return fiber; }
     @Override public void setFiber(String fiber) { this.fiber = fiber; }
+    @Override public String getCarbohydrates() { return carbohydrates; }
+    @Override public void setCarbohydrates(String carbohydrates) { this.carbohydrates = carbohydrates; }
 }

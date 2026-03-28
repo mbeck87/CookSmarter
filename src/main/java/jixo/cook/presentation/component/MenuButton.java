@@ -1,26 +1,11 @@
 package jixo.cook.presentation.component;
 
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.geometry.Insets;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.util.Duration;
 
 public class MenuButton {
 
     private HBox box;
-    private Boolean selected = false;
-    private Boolean locker = false;
-    private final int maxSteps = 20;
-    private final Timeline timeline = new Timeline();
+    private boolean selected = false;
 
     public MenuButton() {}
 
@@ -28,69 +13,18 @@ public class MenuButton {
         this.box = box;
     }
 
-    public void highlight() {
-        if (timeline.getStatus() == Animation.Status.RUNNING) {
-            timeline.stop();
-        }
-        timeline.getKeyFrames().clear();
-        for (int step = 0; step <= maxSteps; step++) {
-            double level = (double) step / maxSteps;
-            KeyFrame frame = new KeyFrame(Duration.millis(step * 25), e ->
-                box.setBackground(new Background(new BackgroundFill(
-                    new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
-                        new Stop(0, Color.CORNFLOWERBLUE),
-                        new Stop(level, Color.TRANSPARENT)),
-                    CornerRadii.EMPTY, Insets.EMPTY))));
-            timeline.getKeyFrames().add(frame);
-        }
-        timeline.play();
-    }
-
-    public void unhighlight() {
-        if (timeline.getStatus() == Animation.Status.RUNNING) {
-            timeline.stop();
-        }
-        timeline.getKeyFrames().clear();
-        for (int step = maxSteps; step >= 0; step--) {
-            double level = (double) step / maxSteps;
-            KeyFrame frame = new KeyFrame(Duration.millis((maxSteps - step) * 25), e ->
-                box.setBackground(new Background(new BackgroundFill(
-                    new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
-                        new Stop(0, Color.CORNFLOWERBLUE),
-                        new Stop(level, Color.TRANSPARENT)),
-                    CornerRadii.EMPTY, Insets.EMPTY))));
-            timeline.getKeyFrames().add(frame);
-        }
-        timeline.play();
-    }
+    // Hover is handled entirely by CSS :hover — nothing to do here
+    public void highlight() {}
+    public void unhighlight() {}
 
     public void setSelected(Boolean selection) {
-        if (selection == true) {
-            selected = true;
-            if (timeline.getStatus() == Animation.Status.RUNNING && !locker) {
-                timeline.stop();
+        selected = selection;
+        if (selected) {
+            if (!box.getStyleClass().contains("selected")) {
+                box.getStyleClass().add("selected");
             }
-            box.setBackground(new Background(new BackgroundFill(
-                new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
-                    new Stop(0, Color.DARKCYAN),
-                    new Stop(1, Color.TRANSPARENT)),
-                CornerRadii.EMPTY, Insets.EMPTY)));
-        } else if (selected == true) {
-            timeline.getKeyFrames().clear();
-            selected = false;
-            for (int step = maxSteps; step >= 0; step--) {
-                double level = (double) step / maxSteps;
-                KeyFrame frame = new KeyFrame(Duration.millis((maxSteps - step) * 25), e ->
-                    box.setBackground(new Background(new BackgroundFill(
-                        new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
-                            new Stop(0, Color.DARKCYAN),
-                            new Stop(level, Color.TRANSPARENT)),
-                        CornerRadii.EMPTY, Insets.EMPTY))));
-                timeline.getKeyFrames().add(frame);
-            }
-            locker = true;
-            timeline.setOnFinished(event -> locker = false);
-            timeline.play();
+        } else {
+            box.getStyleClass().remove("selected");
         }
     }
 

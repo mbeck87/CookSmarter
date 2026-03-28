@@ -44,6 +44,7 @@ public class Translator {
         map.put("lProtein", "Proteine:");
         map.put("lSalt", "Salz:");
         map.put("lSugar", "Zucker:");
+        map.put("lCarbohydrates", "Kohlenhydrate:");
         map.put("lSearch", "Suche");
     }
 
@@ -61,6 +62,7 @@ public class Translator {
         map.put("lProtein", "protein:");
         map.put("lSalt", "salt:");
         map.put("lSugar", "sugar:");
+        map.put("lCarbohydrates", "carbohydrates:");
         map.put("lSearch", "search");
     }
 

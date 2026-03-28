@@ -23,11 +23,11 @@ public class IngredientCard extends VBox {
         this.getChildren().add(img);
 
         Label title = new Label(ingredient.getName());
-        title.setWrapText(true);
+        title.getStyleClass().add("food-card-label");
         this.getChildren().add(title);
 
-        this.setStyle("-fx-background-color: rgba(100, 149, 237, 0.4); -fx-background-radius: 10px;");
-        this.setPrefSize(140, 160);
+        this.getStyleClass().add("food-card");
+        this.setPrefSize(150, 175);
         this.setCursor(Cursor.HAND);
 
         String path = ingredient.getImageUrl();

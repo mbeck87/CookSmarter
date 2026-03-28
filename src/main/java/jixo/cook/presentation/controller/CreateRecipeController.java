@@ -29,6 +29,7 @@ import jixo.cook.presentation.component.RecipeIngredientRow;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CreateRecipeController {
 
@@ -45,6 +46,7 @@ public class CreateRecipeController {
     @FXML private Label lProtein;
     @FXML private Label lSalt;
     @FXML private Label lSugar;
+    @FXML private Label lCarbohydrates;
     @FXML private TextArea textArea;
 
     private final ManageIngredientUseCase manageIngredient = AppConfig.getInstance().manageIngredient;
@@ -89,7 +91,7 @@ public class CreateRecipeController {
         flowPane.setVgap(5);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: lightblue; -fx-background-color: lightblue");
+        scrollPane.getStyleClass().add("content-scroll");
 
         if (selectedRecipe != null) {
             imageUrl = selectedRecipe.getImageURL();
@@ -198,7 +200,7 @@ public class CreateRecipeController {
             card.setCursor(Cursor.CLOSED_HAND);
             ghostBox = cloneCard(card);
             ghostBox.setMouseTransparent(true);
-            ghostBox.setStyle("-fx-background-color: rgba(100, 149, 237); -fx-background-radius: 10px;");
+            ghostBox.getStyleClass().add("food-card");
             Scene scene = new Scene(ghostBox);
             scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);
@@ -243,7 +245,7 @@ public class CreateRecipeController {
     }
 
     private void calculateInTotal() {
-        double[] total = new double[6];
+        double[] total = new double[7];
         for (RecipeIngredient ri : recipeIngredients) {
             String menge = (ri.getMenge() == null || ri.getMenge().isEmpty()) ? "0" : ri.getMenge();
             total[0] += getValue(menge, ri.getEnergy());
@@ -252,6 +254,7 @@ public class CreateRecipeController {
             total[3] += getValue(menge, ri.getSalt());
             total[4] += getValue(menge, ri.getProteins());
             total[5] += getValue(menge, ri.getFiber());
+            total[6] += getValue(menge, ri.getCarbohydrates());
         }
         lEnergy.setText(format(total[0]));
         lKcal.setText(format(NutritionalInfo.getKcal(total[0])));
@@ -260,21 +263,22 @@ public class CreateRecipeController {
         lSalt.setText(format(total[3]));
         lProtein.setText(format(total[4]));
         lFiber.setText(format(total[5]));
+        lCarbohydrates.setText(format(total[6]));
     }
 
     private double getValue(String amount, String value) {
-        double doubleAmount = Double.parseDouble(amount);
+        double doubleAmount = Double.parseDouble(amount.replace(",", "."));
         double val = check(value);
         return doubleAmount / 100.0 * val;
     }
 
     private String format(double value) {
-        return String.format("%.2f", value);
+        return String.format(Locale.US, "%.2f", value);
     }
 
     private double check(String text) {
         try {
-            return Double.parseDouble(text);
+            return Double.parseDouble(text.replace(",", "."));
         } catch (NumberFormatException e) {
             return 0.0;
         }

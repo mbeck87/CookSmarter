@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import jixo.cook.domain.model.Recipe;
 import jixo.cook.infrastructure.i18n.Translator;
 import jixo.cook.presentation.component.MenuButton;
+import jixo.cook.presentation.component.SidebarIconFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,11 @@ public class MenuController {
         buttonList.add(new MenuButton(menuIngredient));
         buttonList.add(new MenuButton(menuImported));
         buttonList.add(new MenuButton(menuRecipe));
+        menuIngredient.getChildren().add(0, SidebarIconFactory.importIngredient());
+        menuImported.getChildren().add(0, SidebarIconFactory.ingredients());
+        menuCreateRecipe.getChildren().add(0, SidebarIconFactory.createRecipe());
+        menuRecipe.getChildren().add(0, SidebarIconFactory.recipes());
         imageBackground.setImage(new Image(getClass().getResource("/jixo/cook/images/background.png").toExternalForm()));
-        borderPane.setStyle("-fx-background-color: lightblue");
     }
 
     @FXML

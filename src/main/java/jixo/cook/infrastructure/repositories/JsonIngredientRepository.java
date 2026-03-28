@@ -28,6 +28,7 @@ public class JsonIngredientRepository implements IngredientRepository {
             node.put("salt", ingredient.getSalt());
             node.put("proteins", ingredient.getProteins());
             node.put("fiber", ingredient.getFiber());
+            node.put("carbohydrates", ingredient.getCarbohydrates());
             node.put("url", ingredient.getImageUrl());
             mapper.writeValue(new File(path + ingredient.getName() + ".json"), node);
         } catch (IOException e) {
@@ -50,6 +51,8 @@ public class JsonIngredientRepository implements IngredientRepository {
                 ing.setSalt(node.get("salt").asText());
                 ing.setProteins(node.get("proteins").asText());
                 ing.setFiber(node.get("fiber").asText());
+                JsonNode carbNode = node.get("carbohydrates");
+                ing.setCarbohydrates(carbNode != null ? carbNode.asText() : "unbekannt");
                 ing.setImageUrl(node.get("url").asText());
                 list.add(ing);
             } catch (IOException e) {

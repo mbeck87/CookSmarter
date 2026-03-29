@@ -37,9 +37,11 @@ public class EditIngredientsController {
 
     private final ManageIngredientUseCase manageUseCase = AppConfig.getInstance().manageIngredient;
     private final ImportIngredientUseCase importUseCase = AppConfig.getInstance().importIngredient;
+    private final javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
     private List<Ingredient> ingredientList;
     private IngredientCard selected;
     private AiChatPanel chatPanel;
+    private String selectedImageUrl = null;
 
     @FXML
     void initialize() {
@@ -54,6 +56,8 @@ public class EditIngredientsController {
 
         chatPanel = new AiChatPanel(AppConfig.getInstance().aiIngredient, this::fillFormFromAi, this::deselect);
         chatContainer.getChildren().add(chatPanel);
+        fileChooser.getExtensionFilters().add(
+                new javafx.stage.FileChooser.ExtensionFilter("Bilddateien", "*.jpg", "*.jpeg", "*.png", "*.gif"));
 
         scrollPane.setOnMouseClicked(e -> {
             if (e.getTarget() == scrollPane || e.getTarget() == flowPane) {
@@ -95,8 +99,10 @@ public class EditIngredientsController {
         }
         Ingredient ing = new Ingredient();
         ing.setName(fName.getText());
-        ing.setImageUrl(selected != null ? selected.getIngredient().getImageUrl()
+        String imageUrl = selectedImageUrl != null ? selectedImageUrl
+                : (selected != null ? selected.getIngredient().getImageUrl()
                 : System.getProperty("user.dir") + "/storage/images/noCover.jpg");
+        ing.setImageUrl(imageUrl);
         ing.setEnergy(fEnergy.getText());
         ing.setSugar(fSugar.getText());
         ing.setSaturatedFat(fFat.getText());
@@ -114,6 +120,24 @@ public class EditIngredientsController {
         info.setHeaderText(null);
         info.setContentText("Zutat \"" + ing.getName() + "\" wurde erfolgreich gespeichert.");
         info.showAndWait();
+    }
+
+    @FXML
+    void pictureAction(ActionEvent event) {
+        java.io.File file = fileChooser.showOpenDialog(imageView.getScene().getWindow());
+        if (file == null) return;
+        try {
+            String ext = file.getName().substring(file.getName().lastIndexOf('.'));
+            String name = fName.getText().isBlank() ? file.getName() : fName.getText();
+            java.io.File dest = new java.io.File(
+                    System.getProperty("user.dir") + "/storage/images/" + name + ext);
+            java.nio.file.Files.copy(file.toPath(), dest.toPath(),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            selectedImageUrl = dest.getAbsolutePath();
+            imageView.setImage(new Image(dest.toURI().toString()));
+        } catch (java.io.IOException e) {
+            new Alert(Alert.AlertType.ERROR, "Bild konnte nicht gespeichert werden.").showAndWait();
+        }
     }
 
     @FXML
@@ -151,6 +175,7 @@ public class EditIngredientsController {
         card.setOnMouseClicked(event -> {
             if (selected != null) selected.getStyleClass().remove("food-card-selected");
             selected = card;
+            selectedImageUrl = null;
             card.getStyleClass().add("food-card-selected");
             setDetails();
             chatPanel.setIngredient(card.getIngredient());
@@ -205,6 +230,7 @@ public class EditIngredientsController {
             selected = null;
         }
         chatPanel.setIngredient(null);
+        selectedImageUrl = null;
         imageView.setImage(null);
         fName.setText(""); fEnergy.setText(""); fKcal.setText("");
         fCarbohydrates.setText(""); fSugar.setText(""); fFat.setText("");

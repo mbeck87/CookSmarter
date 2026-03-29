@@ -20,6 +20,7 @@ public class AiChatPanel extends VBox {
 
     private final AiIngredientUseCase useCase;
     private final Consumer<Ingredient> onIngredientCreated;
+    private final Runnable onDeselect;
     private final VBox chatMessages = new VBox(8);
     private final TextField inputField = new TextField();
     private final Button sendButton = new Button("Senden");
@@ -28,9 +29,10 @@ public class AiChatPanel extends VBox {
     private Ingredient currentIngredient = null;
     private boolean waiting = false;
 
-    public AiChatPanel(AiIngredientUseCase useCase, Consumer<Ingredient> onIngredientCreated) {
+    public AiChatPanel(AiIngredientUseCase useCase, Consumer<Ingredient> onIngredientCreated, Runnable onDeselect) {
         this.useCase = useCase;
         this.onIngredientCreated = onIngredientCreated;
+        this.onDeselect = onDeselect;
         build();
     }
 
@@ -153,6 +155,7 @@ public class AiChatPanel extends VBox {
             String err = useCase.getLastError();
             Platform.runLater(() -> {
                 if (created != null) {
+                    onDeselect.run();
                     addAiMessage("Nährwerte für \"" + created.getName() + "\" wurden ins Formular eingetragen. Bitte prüfen und Speichern klicken.");
                     onIngredientCreated.accept(created);
                 } else {

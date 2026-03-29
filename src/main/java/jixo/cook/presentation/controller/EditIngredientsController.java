@@ -52,7 +52,7 @@ public class EditIngredientsController {
         fEnergy.setOnKeyReleased(e -> updateKcalFromKj());
         fKcal.setOnKeyReleased(e -> updateKjFromKcal());
 
-        chatPanel = new AiChatPanel(AppConfig.getInstance().aiIngredient, this::fillFormFromAi);
+        chatPanel = new AiChatPanel(AppConfig.getInstance().aiIngredient, this::fillFormFromAi, this::deselect);
         chatContainer.getChildren().add(chatPanel);
 
         scrollPane.setOnMouseClicked(e -> {

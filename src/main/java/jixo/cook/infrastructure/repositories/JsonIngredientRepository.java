@@ -16,6 +16,10 @@ public class JsonIngredientRepository implements IngredientRepository {
 
     private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
+    private String sanitizeFileName(String name) {
+        return name.replaceAll("[/\\\\:*?\"<>|]", "-").trim();
+    }
+
     @Override
     public void save(Ingredient ingredient) {
         String path = System.getProperty("user.dir") + "/storage/ingredient/";
@@ -30,7 +34,7 @@ public class JsonIngredientRepository implements IngredientRepository {
             node.put("fiber", ingredient.getFiber());
             node.put("carbohydrates", ingredient.getCarbohydrates());
             node.put("url", ingredient.getImageUrl());
-            mapper.writeValue(new File(path + ingredient.getName() + ".json"), node);
+            mapper.writeValue(new File(path + sanitizeFileName(ingredient.getName()) + ".json"), node);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -65,8 +69,8 @@ public class JsonIngredientRepository implements IngredientRepository {
     @Override
     public void delete(Ingredient ingredient) {
         String ext = getExt(ingredient.getImageUrl());
-        File json = new File(System.getProperty("user.dir") + "/storage/ingredient/" + ingredient.getName() + ".json");
-        File image = new File(System.getProperty("user.dir") + "/storage/images/" + ingredient.getName() + ext);
+        File json = new File(System.getProperty("user.dir") + "/storage/ingredient/" + sanitizeFileName(ingredient.getName()) + ".json");
+        File image = new File(System.getProperty("user.dir") + "/storage/images/" + sanitizeFileName(ingredient.getName()) + ext);
         json.delete();
         image.delete();
     }

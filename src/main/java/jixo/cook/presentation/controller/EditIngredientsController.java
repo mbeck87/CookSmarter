@@ -20,6 +20,7 @@ import java.util.Locale;
 
 public class EditIngredientsController {
 
+    @FXML private Button btnDeleteImage;
     @FXML private TextField fEnergy;
     @FXML private TextField fKcal;
     @FXML private TextField fFat;
@@ -41,7 +42,8 @@ public class EditIngredientsController {
     private List<Ingredient> ingredientList;
     private IngredientCard selected;
     private AiChatPanel chatPanel;
-    private String selectedImageUrl = null;
+    private String selectedImageUrl = null; // null = unchanged, "" = deleted (use noCover), path = new image
+    private String noCoverDisplayUrl;
 
     @FXML
     void initialize() {
@@ -51,6 +53,9 @@ public class EditIngredientsController {
         scrollPane.setFitToWidth(true);
         scrollPane.getStyleClass().add("content-scroll");
         imageView.setPreserveRatio(true);
+        noCoverDisplayUrl = getClass().getResource("/jixo/cook/images/noCover.jpg").toExternalForm();
+        imageView.setImage(new Image(noCoverDisplayUrl));
+        btnDeleteImage.setDisable(true);
         fEnergy.setOnKeyReleased(e -> updateKcalFromKj());
         fKcal.setOnKeyReleased(e -> updateKjFromKcal());
 
@@ -99,9 +104,15 @@ public class EditIngredientsController {
         }
         Ingredient ing = new Ingredient();
         ing.setName(fName.getText());
-        String imageUrl = selectedImageUrl != null ? selectedImageUrl
-                : (selected != null ? selected.getIngredient().getImageUrl()
-                : System.getProperty("user.dir") + "/storage/images/noCover.jpg");
+        String noCoverPath = System.getProperty("user.dir") + "/storage/images/noCover.jpg";
+        String imageUrl;
+        if (selectedImageUrl == null) {
+            imageUrl = selected != null ? selected.getIngredient().getImageUrl() : noCoverPath;
+        } else if (selectedImageUrl.isEmpty()) {
+            imageUrl = noCoverPath;
+        } else {
+            imageUrl = selectedImageUrl;
+        }
         ing.setImageUrl(imageUrl);
         ing.setEnergy(fEnergy.getText());
         ing.setSugar(fSugar.getText());
@@ -135,8 +146,32 @@ public class EditIngredientsController {
                     java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             selectedImageUrl = dest.getAbsolutePath();
             imageView.setImage(new Image(dest.toURI().toString()));
+            btnDeleteImage.setDisable(false);
         } catch (java.io.IOException e) {
             new Alert(Alert.AlertType.ERROR, "Bild konnte nicht gespeichert werden.").showAndWait();
+        }
+    }
+
+    @FXML
+    void deleteImageAction(ActionEvent event) {
+        // delete custom image file from disk
+        String current = selectedImageUrl != null && !selectedImageUrl.isEmpty() ? selectedImageUrl
+                : (selected != null ? selected.getIngredient().getImageUrl() : null);
+        if (current != null && !current.contains("noCover")) {
+            new java.io.File(current).delete();
+        }
+
+        String noCoverPath = System.getProperty("user.dir") + "/storage/images/noCover.jpg";
+        selectedImageUrl = "";
+
+        // update detail panel
+        imageView.setImage(new Image(noCoverDisplayUrl));
+        btnDeleteImage.setDisable(true);
+
+        // update card image + ingredient model + JSON
+        if (selected != null) {
+            selected.updateImage(noCoverPath);
+            importUseCase.importIngredient(selected.getIngredient());
         }
     }
 
@@ -185,6 +220,7 @@ public class EditIngredientsController {
     private void setDetails() {
         Ingredient ing = selected.getIngredient();
         imageView.setImage(getImage(ing.getImageUrl()));
+        btnDeleteImage.setDisable(ing.getImageUrl() == null || ing.getImageUrl().contains("noCover"));
         fName.setText(ing.getName());
         fEnergy.setText(ing.getEnergy());
         fKcal.setText(toKcal(ing.getEnergy()));
@@ -219,9 +255,12 @@ public class EditIngredientsController {
     private Image getImage(String url) {
         if (url.startsWith("http://") || url.startsWith("https://")) {
             return new Image(url);
-        } else {
-            return new Image("file:/" + url);
         }
+        Image image = new Image("file:/" + url);
+        if (image.isError()) {
+            image = new Image(noCoverDisplayUrl);
+        }
+        return image;
     }
 
     private void deselect() {
@@ -231,7 +270,8 @@ public class EditIngredientsController {
         }
         chatPanel.setIngredient(null);
         selectedImageUrl = null;
-        imageView.setImage(null);
+        imageView.setImage(new Image(noCoverDisplayUrl));
+        btnDeleteImage.setDisable(true);
         fName.setText(""); fEnergy.setText(""); fKcal.setText("");
         fCarbohydrates.setText(""); fSugar.setText(""); fFat.setText("");
         fSalt.setText(""); fProtein.setText(""); fFiber.setText("");

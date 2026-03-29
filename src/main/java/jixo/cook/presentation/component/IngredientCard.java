@@ -11,11 +11,12 @@ import jixo.cook.domain.model.Ingredient;
 public class IngredientCard extends VBox {
 
     private final Ingredient ingredient;
+    private final ImageView img = new ImageView();
 
     public IngredientCard(Ingredient ingredient) {
         this.ingredient = ingredient;
 
-        ImageView img = new ImageView();
+        ImageView img = this.img;
         img.setFitWidth(100);
         img.setFitHeight(100);
         img.setPreserveRatio(true);
@@ -35,9 +36,19 @@ public class IngredientCard extends VBox {
             if (path.startsWith("http://") || path.startsWith("https://")) {
                 img.setImage(new Image(path, true));
             } else {
-                img.setImage(new Image("file:/" + path));
+                Image image = new Image("file:/" + path);
+                img.setImage(image.isError() ? noCover() : image);
             }
         }
+    }
+
+    private static Image noCover() {
+        return new Image("file:/" + System.getProperty("user.dir") + "/storage/images/noCover.jpg");
+    }
+
+    public void updateImage(String absolutePath) {
+        ingredient.setImageUrl(absolutePath);
+        img.setImage(new Image("file:/" + absolutePath));
     }
 
     public Ingredient getIngredient() {

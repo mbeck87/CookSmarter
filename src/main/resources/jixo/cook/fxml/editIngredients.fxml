@@ -51,7 +51,12 @@
                         <ImageView fx:id="imageView" fitHeight="88.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </StackPane>
-                  <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#pictureAction" styleClass="btn-secondary" text="Bild wählen" HBox.hgrow="ALWAYS" />
+                  <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#pictureAction" styleClass="btn-secondary" text="Bild wählen" />
+                        <Button fx:id="btnDeleteImage" maxWidth="Infinity" mnemonicParsing="false" onAction="#deleteImageAction" styleClass="btn-danger" text="Bild löschen" />
+                     </children>
+                  </VBox>
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="8.0">
